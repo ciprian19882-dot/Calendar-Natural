@@ -4,44 +4,50 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center_vertical"
-    android:padding="18dp"
+    android:gravity="center"
+    android:padding="20dp"
     android:background="@drawable/widget_background">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center"
         android:text="NATURAL CALENDAR"
-        android:textColor="#F2C45A"
-        android:textSize="10sp"
-        android:letterSpacing="0.16"
+        android:textColor="#D9B55A"
+        android:textSize="11sp"
+        android:letterSpacing="0.18"
         android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/widgetNaturalDate"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
         android:text="Month 7 · Day 1"
-        android:textColor="#FFF8E7"
-        android:textSize="23sp"
-        android:textStyle="bold"/>
+        android:textColor="#FFF9ED"
+        android:textSize="27sp"
+        android:textStyle="bold"
+        android:maxLines="1"/>
 
     <TextView
         android:id="@+id/widgetPhase"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="7dp"
+        android:gravity="center"
         android:text="●  New Moon"
-        android:textColor="#D5DDEA"
-        android:textSize="14sp"/>
+        android:textColor="#E6EBF2"
+        android:textSize="16sp"
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/widgetCivilDate"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
+        android:gravity="center"
         android:text="Fri, 11 Sep"
-        android:textColor="#8FA0B5"
-        android:textSize="11sp"/>
+        android:textColor="#A7B2C2"
+        android:textSize="13sp"/>
 </LinearLayout>
