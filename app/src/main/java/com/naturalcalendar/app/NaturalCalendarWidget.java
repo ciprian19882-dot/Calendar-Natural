@@ -56,7 +56,7 @@ public class NaturalCalendarWidget extends AppWidgetProvider {
 
   private static Date approximatePreviousNew(Date d){
     Calendar c = Calendar.getInstance(); c.setTime(d);
-    long utcDay = Date.UTC(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+    long utcDay = Date.UTC(c.get(Calendar.YEAR) - 1900, c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
     long k = (long)Math.floor((utcDay - EPOCH) / (SYN * DAY));
     return localMidnight(new Date(EPOCH + Math.round(k * SYN * DAY)));
   }
