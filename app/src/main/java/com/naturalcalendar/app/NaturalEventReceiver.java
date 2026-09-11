@@ -1,5 +1,6 @@
 package com.naturalcalendar.app;
 
+import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -7,8 +8,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-
-import androidx.core.app.NotificationCompat;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -43,14 +42,15 @@ public class NaturalEventReceiver extends BroadcastReceiver {
 
     Intent open = new Intent(context, MainActivity.class);
     PendingIntent pi = PendingIntent.getActivity(context, 0, open, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-    NotificationCompat.Builder b = new NotificationCompat.Builder(context, CHANNEL_ID)
-        .setSmallIcon(android.R.drawable.ic_menu_today)
+    Notification.Builder builder = Build.VERSION.SDK_INT >= 26
+        ? new Notification.Builder(context, CHANNEL_ID)
+        : new Notification.Builder(context);
+    builder.setSmallIcon(android.R.drawable.ic_menu_today)
         .setContentTitle(event[0])
         .setContentText(event[1])
-        .setStyle(new NotificationCompat.BigTextStyle().bigText(event[1]))
+        .setStyle(new Notification.BigTextStyle().bigText(event[1]))
         .setAutoCancel(true)
-        .setContentIntent(pi)
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-    nm.notify(today.hashCode(), b.build());
+        .setContentIntent(pi);
+    nm.notify(today.hashCode(), builder.build());
   }
 }
