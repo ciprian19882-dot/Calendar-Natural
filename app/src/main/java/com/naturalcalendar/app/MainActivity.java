@@ -41,7 +41,7 @@ public class MainActivity extends Activity {
     web.setWebViewClient(new WebViewClient(){
       @Override public void onPageFinished(WebView view,String url){
         super.onPageFinished(view,url);
-        String js="(function(){function p(){document.querySelectorAll('.eventIcon').forEach(function(e){var t=e.textContent.trim();if(t==='●')e.textContent='🌑';else if(t==='○')e.textContent='🌕';else if(t==='◐')e.textContent='🌓';else if(t==='◑')e.textContent='🌗';});document.querySelectorAll('.legend span').forEach(function(e){e.textContent=e.textContent.replace(/^● /,'🌑 ').replace(/^○ /,'🌕 ').replace(/^◐ /,'🌓 ').replace(/^◑ /,'🌗 ');});}p();new MutationObserver(p).observe(document.body,{childList:true,subtree:true});})();";
+        String js="(function(){document.querySelectorAll('.legend span').forEach(function(e){e.textContent=e.textContent.replace(/^● /,'🌑 ').replace(/^○ /,'🌕 ').replace(/^◐ /,'🌓 ').replace(/^◑ /,'🌗 ');});})();";
         view.evaluateJavascript(js,null);
       }
     });
