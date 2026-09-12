@@ -34,7 +34,7 @@ public class NaturalEventReceiver extends BroadcastReceiver {
     int n=0;
 
     for(AstronomyEngine.Event e:events){
-      String title=e.symbol+"  "+e.name;
+      String title=symbolFor(e)+"  "+e.name;
       String body=messageFor(e)+" · "+time.format(e.instant);
       Notification.Builder b=Build.VERSION.SDK_INT>=26?new Notification.Builder(context,CHANNEL_ID):new Notification.Builder(context);
       b.setSmallIcon(android.R.drawable.ic_menu_today)
@@ -45,6 +45,15 @@ public class NaturalEventReceiver extends BroadcastReceiver {
        .setContentIntent(pi);
       nm.notify((AstronomyEngine.iso(new Date())+e.type).hashCode()+n++,b.build());
     }
+  }
+
+  private static String symbolFor(AstronomyEngine.Event e){
+    String n=e.name;
+    if("New Moon".equals(n)) return "🌑";
+    if("First Quarter".equals(n)) return "🌓";
+    if("Full Moon".equals(n)) return "🌕";
+    if("Last Quarter".equals(n)) return "🌗";
+    return e.symbol;
   }
 
   private static String messageFor(AstronomyEngine.Event e){
