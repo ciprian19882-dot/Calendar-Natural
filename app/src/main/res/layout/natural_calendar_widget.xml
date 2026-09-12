@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
-    android:padding="20dp"
+    android:padding="18dp"
     android:background="@drawable/widget_background">
 
     <TextView
@@ -14,7 +14,7 @@
         android:gravity="center"
         android:text="NATURAL CALENDAR"
         android:textColor="#D9B55A"
-        android:textSize="11sp"
+        android:textSize="10sp"
         android:letterSpacing="0.18"
         android:textStyle="bold"/>
 
@@ -22,32 +22,44 @@
         android:id="@+id/widgetNaturalDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="8dp"
         android:gravity="center"
-        android:text="Month 7 · Day 1"
+        android:text="Month 7 · Day 2"
         android:textColor="#FFF9ED"
-        android:textSize="27sp"
+        android:textSize="26sp"
         android:textStyle="bold"
         android:maxLines="1"/>
 
     <TextView
-        android:id="@+id/widgetPhase"
+        android:id="@+id/widgetMoonStatus"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="7dp"
+        android:layout_marginTop="6dp"
         android:gravity="center"
-        android:text="●  New Moon"
+        android:text="◔  Waxing Crescent · 3%"
         android:textColor="#E6EBF2"
-        android:textSize="16sp"
-        android:textStyle="bold"/>
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:maxLines="1"/>
+
+    <TextView
+        android:id="@+id/widgetSunStatus"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="☀  Day · 28°"
+        android:textColor="#E8C96A"
+        android:textSize="13sp"
+        android:maxLines="1"/>
 
     <TextView
         android:id="@+id/widgetCivilDate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="7dp"
         android:gravity="center"
-        android:text="Fri, 11 Sep"
+        android:text="Sat, 12 Sep"
         android:textColor="#A7B2C2"
-        android:textSize="13sp"/>
+        android:textSize="12sp"/>
 </LinearLayout>
