@@ -33,33 +33,28 @@ public class NaturalCalendarWidget extends AppWidgetProvider {
     }
   }
 
-  private static final class MoonLive {
-    String name, symbol;
-    int illuminationPct;
+  private static String moonSymbolForName(String name){
+    if("New Moon".equals(name)) return "🌑";
+    if("Waxing Crescent".equals(name)) return "🌒";
+    if("First Quarter".equals(name)) return "🌓";
+    if("Waxing Gibbous".equals(name)) return "🌔";
+    if("Full Moon".equals(name)) return "🌕";
+    if("Waning Gibbous".equals(name)) return "🌖";
+    if("Last Quarter".equals(name)) return "🌗";
+    if("Waning Crescent".equals(name)) return "🌘";
+    return "🌙";
   }
 
-  private static MoonLive moonLive(Date now){
+  private static int liveIllumination(Date now){
     long k=AstronomyEngine.previousNewLunation(now);
     Date prev=AstronomyEngine.moonPhaseInstant(k,0.0);
     if(prev.after(now)){ k--; prev=AstronomyEngine.moonPhaseInstant(k,0.0); }
     Date next=AstronomyEngine.moonPhaseInstant(k+1,0.0);
-    while(!next.after(now)){
-      k++; prev=next; next=AstronomyEngine.moonPhaseInstant(k+1,0.0);
-    }
+    while(!next.after(now)){ k++; prev=next; next=AstronomyEngine.moonPhaseInstant(k+1,0.0); }
     double f=(now.getTime()-prev.getTime())/(double)(next.getTime()-prev.getTime());
     f=Math.max(0.0,Math.min(0.999999,f));
     double illum=(1.0-Math.cos(2.0*Math.PI*f))/2.0;
-    MoonLive m=new MoonLive();
-    m.illuminationPct=(int)Math.round(illum*100.0);
-    if(f<0.0625){ m.name="New Moon"; m.symbol="●"; }
-    else if(f<0.1875){ m.name="Waxing Crescent"; m.symbol="◔"; }
-    else if(f<0.3125){ m.name="First Quarter"; m.symbol="◐"; }
-    else if(f<0.4375){ m.name="Waxing Gibbous"; m.symbol="◕"; }
-    else if(f<0.5625){ m.name="Full Moon"; m.symbol="○"; }
-    else if(f<0.6875){ m.name="Waning Gibbous"; m.symbol="◕"; }
-    else if(f<0.8125){ m.name="Last Quarter"; m.symbol="◑"; }
-    else { m.name="Waning Crescent"; m.symbol="◔"; }
-    return m;
+    return (int)Math.round(illum*100.0);
   }
 
   private static Location lastLocation(Context context){
@@ -125,10 +120,10 @@ public class NaturalCalendarWidget extends AppWidgetProvider {
   private static void updateWidget(Context context,AppWidgetManager manager,int id){
     Date now=new Date();
     AstronomyEngine.Info i=AstronomyEngine.info(now);
-    MoonLive moon=moonLive(now);
+    int illumination=liveIllumination(now);
     RemoteViews v=new RemoteViews(context.getPackageName(),R.layout.natural_calendar_widget);
     v.setTextViewText(R.id.widgetNaturalDate,"Month "+i.naturalMonth+" · Day "+i.naturalDay);
-    v.setTextViewText(R.id.widgetMoonStatus,moon.symbol+"  "+moon.name+" · "+moon.illuminationPct+"%");
+    v.setTextViewText(R.id.widgetMoonStatus,moonSymbolForName(i.phaseName)+"  "+i.phaseName+" · "+illumination+"%");
     v.setTextViewText(R.id.widgetSunStatus,sunStatus(context,now));
     v.setTextViewText(R.id.widgetCivilDate,new SimpleDateFormat("EEE, d MMM · HH:mm",Locale.ENGLISH).format(now));
     Intent open=new Intent(context,MainActivity.class);
