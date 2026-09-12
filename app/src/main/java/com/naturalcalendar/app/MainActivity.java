@@ -38,7 +38,13 @@ public class MainActivity extends Activity {
     web=new WebView(this); setContentView(web);
     WebSettings s=web.getSettings(); s.setJavaScriptEnabled(true); s.setDomStorageEnabled(true); s.setAllowFileAccess(true); s.setGeolocationEnabled(true);
     web.addJavascriptInterface(new NaturalBridge(), "NaturalBridge");
-    web.setWebViewClient(new WebViewClient());
+    web.setWebViewClient(new WebViewClient(){
+      @Override public void onPageFinished(WebView view,String url){
+        super.onPageFinished(view,url);
+        String js="(function(){function p(){document.querySelectorAll('.eventIcon').forEach(function(e){var t=e.textContent.trim();if(t==='●')e.textContent='🌑';else if(t==='○')e.textContent='🌕';else if(t==='◐')e.textContent='🌓';else if(t==='◑')e.textContent='🌗';});document.querySelectorAll('.legend span').forEach(function(e){e.textContent=e.textContent.replace(/^● /,'🌑 ').replace(/^○ /,'🌕 ').replace(/^◐ /,'🌓 ').replace(/^◑ /,'🌗 ');});}p();new MutationObserver(p).observe(document.body,{childList:true,subtree:true});})();";
+        view.evaluateJavascript(js,null);
+      }
+    });
     web.setWebChromeClient(new WebChromeClient(){
       @Override public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback){
         if(checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION)==PackageManager.PERMISSION_GRANTED || checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION)==PackageManager.PERMISSION_GRANTED) callback.invoke(origin,true,false);
@@ -53,16 +59,27 @@ public class MainActivity extends Activity {
   private Date parseIso(String s){ try { synchronized(isoFmt){ return isoFmt.parse(s); } } catch(ParseException e){ return new Date(); } }
   private String iso(Date d){ synchronized(isoFmt){ return isoFmt.format(d); } }
   private static long daysBetween(Date a,Date b){ return Math.round((AstronomyEngine.localMidnight(b).getTime()-AstronomyEngine.localMidnight(a).getTime())/(double)AstronomyEngine.DAY_MS); }
+  private static String moonSymbolForName(String name){
+    if("New Moon".equals(name)) return "🌑";
+    if("Waxing Crescent".equals(name)) return "🌒";
+    if("First Quarter".equals(name)) return "🌓";
+    if("Waxing Gibbous".equals(name)) return "🌔";
+    if("Full Moon".equals(name)) return "🌕";
+    if("Waning Gibbous".equals(name)) return "🌖";
+    if("Last Quarter".equals(name)) return "🌗";
+    if("Waning Crescent".equals(name)) return "🌘";
+    return "🌙";
+  }
 
   private class NaturalBridge {
-    @JavascriptInterface public String version(){ return "4.0"; }
+    @JavascriptInterface public String version(){ return "4.1"; }
     @JavascriptInterface public String getInfo(String dateIso){
       try{
         Date d=parseIso(dateIso); AstronomyEngine.Info i=AstronomyEngine.info(d); JSONObject o=new JSONObject();
         o.put("date",iso(i.date)); o.put("naturalMonth",i.naturalMonth); o.put("naturalDay",i.naturalDay); o.put("naturalYearStart",i.naturalYearStart);
-        o.put("season",i.season); o.put("phase",i.phaseName); o.put("phaseSymbol",i.phaseSymbol); o.put("moonAge",i.moonAgeDays); o.put("illumination",i.illumination);
+        o.put("season",i.season); o.put("phase",i.phaseName); o.put("phaseSymbol",moonSymbolForName(i.phaseName)); o.put("moonAge",i.moonAgeDays); o.put("illumination",i.illumination);
         o.put("previousNew",iso(i.previousNew)); o.put("nextNew",iso(i.nextNew));
-        o.put("nextFullInstant",i.nextFull.getTime()); o.put("nextPhaseInstant",i.nextPrimaryPhase.getTime()); o.put("nextPhaseName",i.nextPrimaryPhaseName); o.put("nextPhaseSymbol",i.nextPrimaryPhaseSymbol);
+        o.put("nextFullInstant",i.nextFull.getTime()); o.put("nextPhaseInstant",i.nextPrimaryPhase.getTime()); o.put("nextPhaseName",i.nextPrimaryPhaseName); o.put("nextPhaseSymbol",moonSymbolForName(i.nextPrimaryPhaseName));
         o.put("nextSeasonInstant",i.nextSeason.getTime()); o.put("nextSeasonName",i.nextSeasonName); o.put("nextSeasonSymbol",i.nextSeasonSymbol);
         return o.toString();
       }catch(Exception e){ return "{\"error\":\"Unable to calculate date\"}"; }
@@ -77,7 +94,7 @@ public class MainActivity extends Activity {
         JSONArray days=new JSONArray();
         for(Date cur=start;cur.before(end);cur=new Date(cur.getTime()+AstronomyEngine.DAY_MS)){
           AstronomyEngine.Info inf=AstronomyEngine.info(cur); JSONObject x=new JSONObject(); x.put("date",iso(cur)); x.put("day",(int)daysBetween(start,cur)+1); x.put("season",inf.season);
-          List<AstronomyEngine.Event> es=AstronomyEngine.eventsOnCivilDate(cur); JSONArray ev=new JSONArray(); for(AstronomyEngine.Event e:es){ JSONObject q=new JSONObject(); q.put("name",e.name); q.put("symbol",e.symbol); q.put("type",e.type); q.put("instant",e.instant.getTime()); ev.put(q); }
+          List<AstronomyEngine.Event> es=AstronomyEngine.eventsOnCivilDate(cur); JSONArray ev=new JSONArray(); for(AstronomyEngine.Event e:es){ JSONObject q=new JSONObject(); q.put("name",e.name); q.put("symbol",e.type.equals("season")?e.symbol:moonSymbolForName(e.name)); q.put("type",e.type); q.put("instant",e.instant.getTime()); ev.put(q); }
           x.put("events",ev); days.put(x);
         }
         o.put("days",days); return o.toString();
